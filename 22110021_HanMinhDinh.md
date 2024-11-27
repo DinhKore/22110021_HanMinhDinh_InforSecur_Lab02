@@ -115,18 +115,32 @@ Create a text file at least 56 bytes on PC2 this file will be sent encrypted to 
 **Question 1**:
 Encrypt the file with aes-cipher in CTR and OFB modes. How do you evaluate both cipher in terms of error propagation and adjacent plaintext blocks are concerned. 
 **Answer 1**:
-- Demonstrate your ability to send file to PC0 to with message authentication measure.
-- Verify the received file for each cipher modes
-**Question 2**:
-- Assume the 6th bit in the ciphered file is corrupted.
-- Verify the received files for each cipher mode on PC0
 
-**Answer 2**:
 
-**Question 3**:
-- Decrypt corrupted files on PC0.
-- Comment on both ciphers in terms of error propagation and adjacent plaintext blocks criteria. 
+first we will create file named plain.txt:
+echo "This is a sample message for encryption. It should be at least 56 bytes long. " > message.txt
 
+Encrypt the file using AES-256 in CTR và OFB:
+CTR:
+openssl enc -aes-256-ctr -in message.txt -out message_ctr.enc -k secretkey
+
+OFB:
+openssl enc -aes-256-ofb -in message.txt -out message_ofb.enc -k secretkey
+
+
+send encryption file from PC2 to PC0:
+
+scp message_ctr.enc user@PC0:/path/to/destination
+scp message_ofb.enc user@PC0:/path/to/destination
+
+Giải mã
+CTR
+openssl enc -d -aes-256-ctr -in message_ctr.enc -out message_ctr_dec.txt -k secretkey
+OFB
+openssl enc -d -aes-256-ofb -in message_ofb.enc -out message_ofb_dec.txt -k secretkey
+
+xác thực tin nhắn
+openssl dgst -sha256 -mac HMAC -macopt key:secretkey message_ctr.enc
 
 
 
